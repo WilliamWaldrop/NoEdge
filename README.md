@@ -43,8 +43,9 @@ Planned supported browsers:
 - Google Chrome
 - Chromium
 - Vivaldi
-- Opera
-- Microsoft Edge
+- Zen
+- Tor
+- DuckDuckGo
 
 The installer should show:
 
