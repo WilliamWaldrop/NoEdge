@@ -237,7 +237,6 @@ function Initialize-Cleanup {
     }
 }
 
-foreach($item in @([pscustomobject]@{Name='Chrome';Path='HKLM:\SOFTWARE\Policies\Google\Chrome';Policies=(Get-ChromeProfile)},[pscustomobject]@{Name='Brave';Path='HKLM:\SOFTWARE\Policies\BraveSoftware\Brave';Policies=(Get-ChromeProfile)})){$apply=New-ActionButton "Apply $($item.Name) Cleanup" {param($sender,$eventArgs)$x=$sender.Tag;Apply-Profile $x.Name $x.Path $x.Policies};$apply.Tag=$item;$panel.Controls.Add($apply);$panel.Controls.Add((New-ActionButton "Restore $($item.Name) Cleanup" {param($sender,$eventArgs)Restore-Profile $sender.Tag} [Drawing.Color]::FromArgb(90,90,90))).Tag=$item} }
 function Initialize-Logs { param($Tab) if($script:LoadedTabs[$Tab.Name]){return};$script:LoadedTabs[$Tab.Name]=$true;$panel=[Windows.Forms.Panel]::new();$panel.Dock='Fill';$panel.BackColor=[Drawing.Color]::FromArgb(32,32,32);$Tab.Controls.Add($panel);$open=New-ActionButton 'Open Log Folder' {Start-Process explorer.exe $script:LogRoot};$open.Dock='Top';$panel.Controls.Add($open);$script:LogBox=[Windows.Forms.TextBox]::new();$script:LogBox.Multiline=$true;$script:LogBox.ReadOnly=$true;$script:LogBox.ScrollBars='Vertical';$script:LogBox.Dock='Fill';$script:LogBox.BackColor=[Drawing.Color]::FromArgb(25,25,25);$script:LogBox.ForeColor=[Drawing.Color]::Gainsboro;$script:LogBox.Font=[Drawing.Font]::new('Consolas',9);$script:LogBox.AppendText("NoEdge log file: $script:LogFile`r`n");$panel.Controls.Add($script:LogBox) }
 
 Initialize-Storage
