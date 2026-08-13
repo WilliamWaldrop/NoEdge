@@ -302,8 +302,13 @@ public sealed class MainForm : Form
                     _edgeInstallation.EdgeExecutablePath
                 );
 
-                _edgeIcon?.Image?.Dispose();
-                _edgeIcon!.Image = icon?.ToBitmap();
+    var bitmap = icon?.ToBitmap();
+
+    if (_edgeIcon is not null && bitmap is not null)
+    {
+        _edgeIcon.Image?.Dispose();
+        _edgeIcon.Image = bitmap;
+    }
             }
             catch
             {
@@ -770,7 +775,37 @@ public sealed class MainForm : Form
     {
         _status.Text = text;
     }
+    private void ShowOperationResult(
+    bool success,
+    string message,
+    string? backupPath)
+{
+    var text = message;
 
+    if (!string.IsNullOrWhiteSpace(backupPath))
+    {
+        text +=
+            $"{Environment.NewLine}{Environment.NewLine}" +
+            $"Backup:{Environment.NewLine}{backupPath}";
+    }
+
+    MessageBox.Show(
+        text,
+        "NoEdge",
+        MessageBoxButtons.OK,
+        success
+            ? MessageBoxIcon.Information
+            : MessageBoxIcon.Error
+    );
+
+    _ = LogAsync(
+        message,
+        success
+            ? NoEdgeLogLevel.Success
+            : NoEdgeLogLevel.Error,
+            "OperationResult"
+        );
+    }
     private static string BuildProcessResultMessage(
         string heading,
         string standardOutput,
