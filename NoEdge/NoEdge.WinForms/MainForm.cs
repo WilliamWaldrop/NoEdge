@@ -510,8 +510,7 @@ public sealed class MainForm : Form
         var result = await Task.Run(() => _policyService.ApplyProfile(profile));
 
         SetStatus(result.Message);
-        ShowOperationResult(result.Success, result.Message, result.BackupPath);
-    }
+MessageBox.Show(result.Message, "NoEdge", MessageBoxButtons.OK, result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);    }
 
     private async Task RestoreProfileAsync(string profileId)
     {
@@ -535,8 +534,7 @@ public sealed class MainForm : Form
         var result = await Task.Run(() => _policyService.RestoreProfile(profile));
 
         SetStatus(result.Message);
-        ShowOperationResult(result.Success, result.Message, result.BackupPath);
-    }
+MessageBox.Show(result.Message, "NoEdge", MessageBoxButtons.OK, result.Success ? MessageBoxIcon.Information : MessageBoxIcon.Error);    }
 
     private async Task UninstallEdgeAsync()
     {
