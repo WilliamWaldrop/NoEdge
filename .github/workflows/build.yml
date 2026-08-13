@@ -1,0 +1,57 @@
+name: Build NoEdge
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build NoEdge WinForms
+    runs-on: windows-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Show .NET environment
+        run: |
+          dotnet --info
+          dotnet --list-sdks
+
+      - name: Restore dependencies
+        run: dotnet restore .\NoEdge.WinForms\NoEdge.WinForms.csproj
+
+      - name: Build Release version
+        run: >
+          dotnet build .\NoEdge.WinForms\NoEdge.WinForms.csproj
+          --configuration Release
+          --no-restore
+
+      - name: Publish Windows x64 build
+        run: >
+          dotnet publish .\NoEdge.WinForms\NoEdge.WinForms.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained false
+          --output .\publish
+          --no-restore
+
+      - name: Upload NoEdge build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NoEdge-win-x64
+          path: .\publish
+          if-no-files-found: error
