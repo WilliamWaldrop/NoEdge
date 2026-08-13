@@ -707,18 +707,21 @@ public sealed class MainForm : Form
         }
     }
 
-    private bool TryBeginTabLoad(string tabName, out TabPage tab)
+private bool TryBeginTabLoad(string tabName, out TabPage tab)
+{
+    tab = _tabs.TabPages[tabName]
+        ?? throw new InvalidOperationException(
+            $"NoEdge could not find the '{tabName}' tab."
+        );
+
+    if (_loadedTabs.Contains(tabName))
     {
-        tab = _tabs.TabPages[tabName];
-
-        if (_loadedTabs.Contains(tabName))
-        {
-            return false;
-        }
-
-        _loadedTabs.Add(tabName);
-        return true;
+        return false;
     }
+
+    _loadedTabs.Add(tabName);
+    return true;
+}
 
     private static FlowLayoutPanel CreateVerticalPanel() => new()
     {
@@ -775,6 +778,37 @@ public sealed class MainForm : Form
     {
         _status.Text = text;
     }
+    private void ShowOperationResult(
+    bool success,
+    string message,
+    string? backupPath)
+{
+    var text = message;
+
+    if (!string.IsNullOrWhiteSpace(backupPath))
+    {
+        text +=
+            $"{Environment.NewLine}{Environment.NewLine}" +
+            $"Backup:{Environment.NewLine}{backupPath}";
+    }
+
+    MessageBox.Show(
+        text,
+        "NoEdge",
+        MessageBoxButtons.OK,
+        success
+            ? MessageBoxIcon.Information
+            : MessageBoxIcon.Error
+    );
+
+    _ = LogAsync(
+        message,
+        success
+            ? NoEdgeLogLevel.Success
+            : NoEdgeLogLevel.Error,
+        "OperationResult"
+    );
+}
     private void ShowOperationResult(
     bool success,
     string message,
